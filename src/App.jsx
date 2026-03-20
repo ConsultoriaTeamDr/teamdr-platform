@@ -539,7 +539,7 @@ function Dashboard({ user, onLogout }) {
                 Bacharel em Educação Física pela UERJ, pós graduado em Biomecânica e Cinesiologia, com Diploma internacional na área de Fitness Trainer e atleta de fisiculturismo, desenvolvi minha metodologia ao longo de mais de 8 anos competindo no Brasil e no exterior. Tudo que aprendi nos bastidores das competições — sobre treino, alimentação e mentalidade — transformei em programas práticos para pessoas reais alcançarem resultados reais. Já ajudei centenas de alunos em vários países. Agora é a sua vez.
               </p>
               <div style={{display:"flex",gap:"32px",flexWrap:"wrap"}}>
-                {[["IFBB","Campeão Nacional"],["NPC","Campeão Internacional"],["5+","Anos de Consultoria"],["1000+","Alunos"]].map(([n,l])=>(
+                {["10+","Anos competindo"],["NPC","Campeão Internacional"],["5+","Anos de Consultoria"],["1000+","Alunos"]].map(([n,l])=>(
                   <div key={n}>
                     <div style={{fontFamily:F.m,fontSize:"20px",fontWeight:"500",color:G.gold,letterSpacing:"-0.5px"}}>{n}</div>
                     <div style={{fontFamily:F.s,fontSize:"11px",color:G.muted,marginTop:"2px"}}>{l}</div>
