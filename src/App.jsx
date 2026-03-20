@@ -367,18 +367,6 @@ export default function Funnel() {
                 ))}
               </div>
 
-              {/* CTA */}
-              <div>
-                <button onClick={()=>{ window.scrollTo({top:document.getElementById("funil")?.offsetTop-80||0,behavior:"smooth"}); }}
-                  style={{
-                    background:`linear-gradient(135deg,${G.gold},${G.goldDim})`,
-                    border:"none",borderRadius:"10px",
-                    padding:"16px 32px",color:"#080808",
-                    fontFamily:F.m,fontSize:"12px",letterSpacing:"2.5px",fontWeight:"500",
-                    cursor:"pointer",
-                    boxShadow:`0 8px 30px rgba(201,168,76,0.3)`,
-                  }}>MONTAR MEU PROGRAMA →</button>
-              </div>
             </div>
           </div>
 
