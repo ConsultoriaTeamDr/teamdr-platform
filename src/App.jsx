@@ -397,10 +397,7 @@ function Dashboard({ user, onLogout }) {
   const [myProds, setMyProds] = useState([]);
   const [loading, setLoad]    = useState(true);
   const [viewer,  setViewer]  = useState(null);
-  const [filter,  setFilter]  = useState("Todos");
   const [scrolled,setScrolled]= useState(false);
-  const [welcome, setWelcome] = useState(true);
-  const [page,    setPage]    = useState("home"); // home | ferramentas
 
   useEffect(()=>{
     const h=()=>setScrolled(window.scrollY>40);
@@ -415,15 +412,12 @@ function Dashboard({ user, onLogout }) {
     },600);
   },[user]);
 
-  const filtered = filter==="Todos" ? myProds : myProds.filter(p=>p.cat===filter);
-  const byCat = CATS.map(cat=>({cat,ps:filtered.filter(p=>p.cat===cat)})).filter(({ps})=>ps.length>0);
-  const activeCats = CATS.filter(c=>myProds.some(p=>p.cat===c));
   const nm = user.name || "Atleta";
 
   return (
     <div style={{minHeight:"100vh",background:G.bg,color:G.white,fontFamily:F.s}}>
       <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
-      <style>{`*{box-sizing:border-box} ::-webkit-scrollbar{display:none} a{text-decoration:none}`}</style>
+      <style>{`*{box-sizing:border-box} ::-webkit-scrollbar{display:none} a{text-decoration:none} @keyframes spin{to{transform:rotate(360deg)}}`}</style>
 
       {/* NAV */}
       <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:200,height:"62px",
@@ -442,14 +436,6 @@ function Dashboard({ user, onLogout }) {
           <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"2px",color:G.muted}}>ÁREA DO CLIENTE</div>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
-          <button onClick={()=>setPage(page==="ferramentas"?"home":"ferramentas")} style={{
-            background: page==="ferramentas" ? `linear-gradient(135deg,${G.gold},${G.goldDim})` : "transparent",
-            border:`1px solid ${page==="ferramentas" ? "transparent" : G.border}`,
-            borderRadius:"6px",padding:"7px 16px",
-            color: page==="ferramentas" ? "#080808" : G.gold,
-            fontFamily:F.m,fontSize:"9px",letterSpacing:"1.5px",cursor:"pointer"}}>
-            ◈ FERRAMENTAS
-          </button>
           <div style={{display:"flex",alignItems:"center",gap:"8px",padding:"6px 12px",
             border:`1px solid ${G.faint}`,borderRadius:"24px",background:G.faint}}>
             <div style={{width:"26px",height:"26px",borderRadius:"50%",
@@ -464,124 +450,83 @@ function Dashboard({ user, onLogout }) {
         </div>
       </nav>
 
-      {/* FERRAMENTAS PAGE */}
-      {page==="ferramentas" && (
-        <div style={{paddingTop:"62px"}}>
-          <ToolsPage user={user}/>
+      {/* BOAS VINDAS */}
+      <div style={{paddingTop:"86px",padding:"86px clamp(16px,4vw,60px) 32px",borderBottom:`1px solid ${G.faint}`}}>
+        <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"4px",color:G.gold,marginBottom:"8px"}}>
+          OLÁ, {nm.toUpperCase()}
         </div>
-      )}
-
-      {/* HOME PAGE */}
-      {page==="home" && <>
-
-      {welcome && !loading && (
-        <div style={{marginTop:"62px",background:"rgba(201,168,76,0.07)",
-          borderLeft:`3px solid ${G.gold}`,
-          padding:"16px clamp(16px,4vw,60px)",
-          display:"flex",alignItems:"center",justifyContent:"space-between",gap:"12px"}}>
-          <div>
-            <div style={{fontFamily:F.d,fontSize:"17px",fontWeight:"700",color:G.white,marginBottom:"2px"}}>
-              Bem-vindo de volta, <em style={{color:G.gold,fontStyle:"italic"}}>{nm}</em>! 👋
-            </div>
-            <div style={{fontFamily:F.s,fontSize:"13px",color:G.muted}}>
-              {myProds.length} produto{myProds.length!==1?"s":""} disponível{myProds.length!==1?"is":""}.
-            </div>
-          </div>
-          <button onClick={()=>setWelcome(false)} style={{background:"transparent",border:"none",color:G.muted,cursor:"pointer",fontSize:"18px"}}>×</button>
-        </div>
-      )}
-
-      {/* HEADER */}
-      <div style={{paddingTop:welcome&&!loading?"24px":"86px",paddingBottom:"24px",
-        padding:`${welcome&&!loading?"24px":"86px"} clamp(16px,4vw,60px) 24px`,
-        borderBottom:`1px solid ${G.faint}`,
-        display:"flex",alignItems:"flex-end",justifyContent:"space-between",flexWrap:"wrap",gap:"16px"}}>
-        <div>
-          <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"4px",color:G.gold,marginBottom:"6px"}}>MEUS PROGRAMAS</div>
-          <h1 style={{margin:0,fontFamily:F.d,fontSize:"clamp(26px,5vw,42px)",fontWeight:"700",
-            color:G.white,letterSpacing:"-1px",lineHeight:1}}>
-            {loading?"Carregando...":`${myProds.length} produto${myProds.length!==1?"s":""} ativo${myProds.length!==1?"s":""}`}
-          </h1>
-        </div>
-        {!loading && activeCats.length > 0 && (
-          <div style={{display:"flex",gap:"7px",flexWrap:"wrap"}}>
-            {["Todos",...activeCats].map(f=>(
-              <button key={f} onClick={()=>setFilter(f)} style={{
-                fontFamily:F.m,fontSize:"9px",letterSpacing:"1.5px",
-                background:filter===f?`linear-gradient(135deg,${G.gold},${G.goldDim})`:G.faint,
-                border:filter===f?"none":`1px solid ${G.faint}`,
-                borderRadius:"20px",padding:"6px 14px",
-                color:filter===f?"#080808":G.muted,cursor:"pointer",transition:"all 0.2s"}}>
-                {f.toUpperCase()}
-              </button>
-            ))}
-          </div>
-        )}
+        <h1 style={{margin:"0 0 8px",fontFamily:F.d,fontSize:"clamp(28px,5vw,44px)",fontWeight:"700",
+          color:G.white,letterSpacing:"-1px",lineHeight:1}}>
+          Bem-vindo à sua área.
+        </h1>
+        <p style={{margin:0,fontFamily:F.s,fontSize:"15px",color:G.muted,maxWidth:"500px",lineHeight:1.7}}>
+          Aqui você encontra tudo que adquiriu com o Daniel — suas planilhas, programas e ferramentas exclusivas. Role a página para explorar.
+        </p>
       </div>
 
       {/* DANIEL SECTION */}
-      {!loading && (
-        <div style={{
-          margin:"40px clamp(16px,4vw,60px)",
-          borderRadius:"16px",
-          overflow:"hidden",
-          border:`1px solid ${G.border}`,
-          background:G.bg2,
-          display:"flex",
-          flexWrap:"wrap",
-          minHeight:"320px",
-        }}>
-          <div style={{flex:"0 0 280px",minHeight:"320px",position:"relative",overflow:"hidden"}}>
-            <img src="/daniel.jpg" alt="Daniel Rezende"
-              style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center top",display:"block"}}/>
-            <div style={{position:"absolute",inset:0,
-              background:"linear-gradient(to right,transparent 60%,rgba(15,15,15,0.9) 100%)"}}/>
-          </div>
-          <div style={{flex:1,minWidth:"280px",padding:"36px 40px",display:"flex",flexDirection:"column",justifyContent:"center",position:"relative"}}>
-            <div style={{position:"absolute",inset:0,
-              backgroundImage:`radial-gradient(ellipse at 80% 50%,rgba(201,168,76,0.06) 0%,transparent 70%)`,
-              pointerEvents:"none"}}/>
-            <div style={{position:"relative"}}>
-              <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"4px",color:G.gold,marginBottom:"12px"}}>SEU COACH</div>
-              <h2 style={{margin:"0 0 4px",fontFamily:F.d,fontSize:"clamp(28px,4vw,42px)",fontWeight:"900",color:G.white,lineHeight:0.95,letterSpacing:"-1px"}}>Daniel</h2>
-              <h2 style={{margin:"0 0 20px",fontFamily:F.d,fontSize:"clamp(28px,4vw,42px)",fontWeight:"900",lineHeight:0.95,letterSpacing:"-1px",fontStyle:"italic",color:G.gold}}>Rezende.</h2>
-
-              {/* Impact phrase */}
-              <div style={{borderLeft:`3px solid ${G.gold}`,paddingLeft:"16px",marginBottom:"20px"}}>
-                <p style={{fontFamily:F.d,fontSize:"17px",fontStyle:"italic",color:G.white,lineHeight:1.5,margin:0}}>
-                  "Não importa se você nunca pisou numa academia ou se já treina há anos. Meu trabalho é te levar ao próximo nível — seja lá qual for."
-                </p>
-              </div>
-
-              <p style={{fontFamily:F.s,fontSize:"14px",color:G.muted,lineHeight:1.85,maxWidth:"480px",margin:"0 0 24px"}}>
-                Bacharel em Educação Física pela UERJ e atleta de fisiculturismo, desenvolvi minha metodologia ao longo de mais de 8 anos competindo no Brasil e no exterior. Tudo que aprendi nos bastidores das competições — sobre treino, alimentação e mentalidade — transformei em programas práticos para pessoas reais alcançarem resultados reais. Já ajudei centenas de alunos em vários países. Agora é a sua vez.
+      <div style={{margin:"40px clamp(16px,4vw,60px)",borderRadius:"16px",overflow:"hidden",
+        border:`1px solid ${G.border}`,background:G.bg2,display:"flex",flexWrap:"wrap",minHeight:"280px"}}>
+        <div style={{flex:"0 0 260px",minHeight:"280px",position:"relative",overflow:"hidden"}}>
+          <img src="/daniel.jpg" alt="Daniel Rezende"
+            style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center top",display:"block"}}/>
+          <div style={{position:"absolute",inset:0,background:"linear-gradient(to right,transparent 60%,rgba(15,15,15,0.9) 100%)"}}/>
+        </div>
+        <div style={{flex:1,minWidth:"260px",padding:"32px 36px",display:"flex",flexDirection:"column",justifyContent:"center",position:"relative"}}>
+          <div style={{position:"absolute",inset:0,backgroundImage:`radial-gradient(ellipse at 80% 50%,rgba(201,168,76,0.06) 0%,transparent 70%)`,pointerEvents:"none"}}/>
+          <div style={{position:"relative"}}>
+            <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"4px",color:G.gold,marginBottom:"10px"}}>SEU COACH</div>
+            <h2 style={{margin:"0 0 4px",fontFamily:F.d,fontSize:"clamp(26px,4vw,38px)",fontWeight:"900",color:G.white,lineHeight:0.95,letterSpacing:"-1px"}}>Daniel</h2>
+            <h2 style={{margin:"0 0 14px",fontFamily:F.d,fontSize:"clamp(26px,4vw,38px)",fontWeight:"900",lineHeight:0.95,letterSpacing:"-1px",fontStyle:"italic",color:G.gold}}>Rezende.</h2>
+            <div style={{borderLeft:`3px solid ${G.gold}`,paddingLeft:"14px",marginBottom:"16px"}}>
+              <p style={{fontFamily:F.d,fontSize:"15px",fontStyle:"italic",color:G.white,lineHeight:1.5,margin:0}}>
+                "Não importa se você nunca pisou numa academia ou se já treina há anos. Meu trabalho é te levar ao próximo nível."
               </p>
-              <div style={{display:"flex",gap:"32px",flexWrap:"wrap"}}>
-                {[["10+","Anos competindo"],["NPC","Campeão Internacional"],["5+","Anos de Consultoria"],["1000+","Alunos"]].map(([n,l])=>(
-                  <div key={n}>
-                    <div style={{fontFamily:F.m,fontSize:"20px",fontWeight:"500",color:G.gold,letterSpacing:"-0.5px"}}>{n}</div>
-                    <div style={{fontFamily:F.s,fontSize:"11px",color:G.muted,marginTop:"2px"}}>{l}</div>
-                  </div>
-                ))}
-              </div>
+            </div>
+            <div style={{display:"flex",gap:"24px",flexWrap:"wrap"}}>
+              {[["10+","Anos competindo"],["NPC","Campeão Internacional"],["5+","Anos de Consultoria"],["1000+","Alunos"]].map(([n,l])=>(
+                <div key={n}>
+                  <div style={{fontFamily:F.m,fontSize:"18px",fontWeight:"500",color:G.gold,letterSpacing:"-0.5px"}}>{n}</div>
+                  <div style={{fontFamily:F.s,fontSize:"11px",color:G.muted,marginTop:"2px"}}>{l}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
-      )}
+      </div>
 
-      {/* CONTENT */}
-      <div style={{padding:"36px 0 60px"}}>
+      {/* FERRAMENTAS SECTION */}
+      <div style={{padding:"0 clamp(16px,4vw,60px)",marginBottom:"48px"}}>
+        <div style={{borderTop:`1px solid ${G.faint}`,paddingTop:"40px",marginBottom:"24px"}}>
+          <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"4px",color:G.gold,marginBottom:"8px"}}>FERRAMENTAS EXCLUSIVAS</div>
+          <h2 style={{margin:"0 0 10px",fontFamily:F.d,fontSize:"clamp(22px,3vw,32px)",fontWeight:"700",color:G.white,letterSpacing:"-0.5px"}}>
+            Calcule, planeje e evolua.
+          </h2>
+          <p style={{margin:0,fontFamily:F.s,fontSize:"14px",color:G.muted,maxWidth:"560px",lineHeight:1.75}}>
+            Ferramentas criadas pelo Daniel para te ajudar a tomar decisões mais inteligentes sobre seu treino e alimentação. A calculadora de IMC é gratuita — as demais são adquiridas separadamente e ficam disponíveis aqui assim que você compra.
+          </p>
+        </div>
+        <ToolsPage user={user}/>
+      </div>
+
+      {/* MEUS PRODUTOS */}
+      <div style={{borderTop:`1px solid ${G.faint}`,paddingTop:"40px",paddingBottom:"60px"}}>
+        <div style={{padding:"0 clamp(16px,4vw,60px)",marginBottom:"28px"}}>
+          <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"4px",color:G.gold,marginBottom:"8px"}}>MEUS PRODUTOS</div>
+          <h2 style={{margin:0,fontFamily:F.d,fontSize:"clamp(22px,3vw,32px)",fontWeight:"700",color:G.white,letterSpacing:"-0.5px"}}>
+            Seus programas ativos
+          </h2>
+        </div>
         {loading ? (
-          <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"300px",gap:"16px"}}>
-            <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"200px",gap:"16px"}}>
             <div style={{width:"38px",height:"38px",borderRadius:"50%",border:`2px solid ${G.faint}`,borderTop:`2px solid ${G.gold}`,animation:"spin 0.8s linear infinite"}}/>
             <div style={{fontFamily:F.m,fontSize:"11px",letterSpacing:"3px",color:G.muted}}>CARREGANDO...</div>
           </div>
         ) : myProds.length===0 ? (
-          <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"380px",textAlign:"center",padding:"0 20px"}}>
-            <div style={{fontFamily:F.m,fontSize:"48px",color:G.faint,marginBottom:"20px"}}>◎</div>
-            <h3 style={{fontFamily:F.d,fontSize:"26px",fontWeight:"700",color:G.white,margin:"0 0 10px"}}>Nenhum produto ainda</h3>
-            <p style={{fontFamily:F.s,fontSize:"15px",color:G.muted,maxWidth:"320px",lineHeight:1.7,margin:"0 0 24px"}}>
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center",padding:"40px 20px",gap:"16px"}}>
+            <div style={{fontFamily:F.m,fontSize:"40px",color:G.faint}}>◎</div>
+            <h3 style={{fontFamily:F.d,fontSize:"22px",fontWeight:"700",color:G.white,margin:0}}>Nenhum produto ainda</h3>
+            <p style={{fontFamily:F.s,fontSize:"14px",color:G.muted,maxWidth:"300px",lineHeight:1.7,margin:0}}>
               Explore o catálogo e comece sua transformação.
             </p>
             <div style={{fontFamily:F.m,fontSize:"11px",letterSpacing:"2px",
@@ -590,15 +535,15 @@ function Dashboard({ user, onLogout }) {
               VER CATÁLOGO →
             </div>
           </div>
-        ) : byCat.length===0 ? (
-          <div style={{padding:"40px clamp(16px,4vw,60px)",fontFamily:F.s,fontSize:"15px",color:G.muted}}>Nenhum produto nessa categoria.</div>
         ) : (
-          byCat.map(({cat,ps})=><Row key={cat} label={cat} ps={ps} onOpen={setViewer}/>)
+          CATS.map(cat=>{
+            const ps = myProds.filter(p=>p.cat===cat);
+            return ps.length ? <Row key={cat} label={cat} ps={ps} onOpen={setViewer}/> : null;
+          })
         )}
       </div>
 
       {viewer && <Viewer p={viewer} onClose={()=>setViewer(null)}/>}
-      </>}
     </div>
   );
 }
@@ -636,21 +581,70 @@ function ToolsPage({ user }) {
   );
 
   const VipBanner = () => (
-    <div style={{background:"rgba(201,168,76,0.05)",border:`1px solid ${G.border}`,
-      borderRadius:"12px",padding:"20px 24px",marginTop:"16px",
-      display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:"12px"}}>
-      <div>
-        <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"3px",color:G.gold,marginBottom:"6px"}}>CONSULTORIA VIP</div>
-        <div style={{fontFamily:F.d,fontSize:"17px",fontWeight:"700",color:G.white,marginBottom:"4px"}}>
-          Quer Daniel do seu lado, 1:1?
+    <div style={{marginTop:"24px",borderRadius:"16px",overflow:"hidden",position:"relative",minHeight:"320px"}}>
+      {/* Background image */}
+      <img src="/public/daniel-vip.jpg" alt="Daniel Rezende"
+        style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover",objectPosition:"center top"}}/>
+      {/* Dark overlay */}
+      <div style={{position:"absolute",inset:0,background:"linear-gradient(105deg, rgba(8,8,8,0.97) 0%, rgba(8,8,8,0.85) 50%, rgba(8,8,8,0.4) 100%)"}}/>
+      {/* Gold top border */}
+      <div style={{position:"absolute",top:0,left:0,right:0,height:"2px",background:`linear-gradient(to right,${G.gold},transparent)`}}/>
+
+      {/* Content */}
+      <div style={{position:"relative",padding:"36px 40px",display:"flex",flexWrap:"wrap",gap:"32px",alignItems:"center",justifyContent:"space-between"}}>
+        <div style={{flex:"1",minWidth:"260px"}}>
+          <div style={{display:"inline-block",fontFamily:F.m,fontSize:"9px",letterSpacing:"3px",
+            color:"#080808",background:G.gold,padding:"4px 12px",borderRadius:"4px",marginBottom:"16px"}}>
+            CONSULTORIA VIP — 1:1 COM DANIEL
+          </div>
+          <h3 style={{margin:"0 0 12px",fontFamily:F.d,fontSize:"clamp(22px,3vw,34px)",
+            fontWeight:"900",color:G.white,lineHeight:1.1,letterSpacing:"-0.5px"}}>
+            Chega de adivinhar.<br/>
+            <em style={{color:G.gold,fontStyle:"italic"}}>Daniel no seu lado.</em>
+          </h3>
+          <p style={{margin:"0 0 20px",fontFamily:F.s,fontSize:"14px",color:G.muted,lineHeight:1.8,maxWidth:"420px"}}>
+            Na consultoria 1:1 você não recebe um plano genérico — você recebe <strong style={{color:G.white}}>atenção total do Daniel</strong>, que analisa seu histórico, seus objetivos e monta tudo do zero pra você. Vídeo chamadas semanais, suporte no WhatsApp todos os dias e ajustes em tempo real conforme seu progresso.
+          </p>
+
+          {/* Includes */}
+          <div style={{display:"flex",flexDirection:"column",gap:"8px",marginBottom:"24px"}}>
+            {[
+              "Anamnese completa em vídeo chamada de 90min",
+              "Programa de treino 100% individualizado",
+              "Plano nutricional personalizado",
+              "4 vídeo chamadas semanais com Daniel",
+              "Suporte diário no WhatsApp",
+              "Ajustes em tempo real conforme evolução",
+            ].map((item,i)=>(
+              <div key={i} style={{display:"flex",gap:"10px",alignItems:"flex-start"}}>
+                <span style={{color:G.gold,fontSize:"12px",flexShrink:0,marginTop:"2px"}}>◆</span>
+                <span style={{fontFamily:F.s,fontSize:"13px",color:G.muted,lineHeight:1.5}}>{item}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{display:"flex",alignItems:"center",gap:"20px",flexWrap:"wrap"}}>
+            <div>
+              <div style={{fontFamily:F.m,fontSize:"10px",letterSpacing:"2px",color:G.muted,marginBottom:"2px"}}>INVESTIMENTO</div>
+              <div style={{fontFamily:F.m,fontSize:"32px",fontWeight:"500",color:G.gold,letterSpacing:"-1px",lineHeight:1}}>R$997</div>
+            </div>
+            <button style={{
+              background:`linear-gradient(135deg,${G.gold},${G.goldDim})`,
+              border:"none",borderRadius:"10px",
+              padding:"16px 32px",color:"#080808",
+              fontFamily:F.m,fontSize:"12px",letterSpacing:"2px",fontWeight:"500",
+              cursor:"pointer",
+              boxShadow:`0 8px 30px rgba(201,168,76,0.35)`,
+            }}>QUERO A CONSULTORIA VIP →</button>
+          </div>
         </div>
-        <div style={{fontFamily:F.s,fontSize:"13px",color:G.muted,maxWidth:"400px",lineHeight:1.6}}>
-          Pula todas as ferramentas e tem um programa 100% personalizado, vídeo chamadas semanais e suporte diário direto com Daniel.
+
+        {/* Studio image on right */}
+        <div style={{flex:"0 0 200px",height:"280px",borderRadius:"12px",overflow:"hidden",
+          border:`1px solid ${G.border}`,display:"none"}}>
+          <img src="/public/daniel-studio.jpg" alt="Daniel Rezende"
+            style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center"}}/>
         </div>
-      </div>
-      <div style={{display:"flex",flexDirection:"column",gap:"8px",alignItems:"flex-end"}}>
-        <div style={{fontFamily:F.m,fontSize:"22px",color:G.gold,letterSpacing:"-0.5px"}}>R$997</div>
-        <Btn>QUERO A VIP →</Btn>
       </div>
     </div>
   );
@@ -740,21 +734,36 @@ function ToolsPage({ user }) {
   };
 
   // TREINO
-  const [trForm,setTrForm]=useState({objetivo:"",nivel:"",dias:"",genero:""});
+  const [trForm,setTrForm]=useState({objetivo:"",nivel:"",dias:"",genero:"",local:""});
   const [trResult,setTrResult]=useState(null);
   const setTr=(k,v)=>setTrForm(p=>({...p,[k]:v}));
   const gerarTreino = () => {
-    if(!trForm.objetivo||!trForm.dias) return;
+    if(!trForm.objetivo||!trForm.dias||!trForm.local) return;
+    const academia = trForm.local==="academia"||trForm.local==="misto";
+    const casa = trForm.local==="casa"||trForm.local==="misto";
     const planos={
-      "hipertrofia-3":["Seg: Peito + Tríceps","Qua: Costas + Bíceps","Sex: Pernas + Ombros"],
-      "hipertrofia-4":["Seg: Peito","Ter: Costas","Qui: Pernas","Sex: Ombros + Braços"],
-      "emagrecimento-3":["Seg: Circuito Full Body","Qua: HIIT + Core","Sex: Circuito Full Body"],
-      "emagrecimento-4":["Seg: Superior + HIIT","Ter: Inferior","Qui: Superior + HIIT","Sex: Inferior + Cardio"],
-      "forca-3":["Seg: Squat","Qua: Bench Press","Sex: Deadlift"],
-      "forca-4":["Seg: Squat + Acessórios","Ter: Bench + Acessórios","Qui: Deadlift + Acessórios","Sex: Ombros + Braços"],
+      "hipertrofia-3-academia":["Seg: Peito + Tríceps","Qua: Costas + Bíceps","Sex: Pernas + Ombros"],
+      "hipertrofia-4-academia":["Seg: Peito","Ter: Costas","Qui: Pernas","Sex: Ombros + Braços"],
+      "hipertrofia-3-casa":["Seg: Empurrar (flexões variadas)","Qua: Puxar (elástico/barra)","Sex: Pernas (agachamento + avanço)"],
+      "hipertrofia-4-casa":["Seg: Peito + Tríceps (peso corporal)","Ter: Costas + Bíceps (elástico)","Qui: Pernas + Glúteos","Sex: Ombros + Core"],
+      "hipertrofia-3-misto":["Seg: Peito + Tríceps (academia)","Qua: Pernas (academia)","Sex: Costas + Core (casa)"],
+      "emagrecimento-3-academia":["Seg: Circuito Full Body + 20min cardio","Qua: HIIT 30min + Abdômen","Sex: Circuito Full Body + Corrida leve"],
+      "emagrecimento-4-academia":["Seg: Superior + HIIT 20min","Ter: Corrida 40min + Core","Qui: Inferior + HIIT 20min","Sex: Full Body + Corrida 30min"],
+      "emagrecimento-3-casa":["Seg: HIIT 30min (burpee, polichinelo, jump)","Qua: Circuito funcional + Corrida 20min","Sex: HIIT + Core (mountain climber, prancha)"],
+      "emagrecimento-3-misto":["Seg: Musculação Full Body (academia)","Qua: Corrida 40min ao ar livre","Sex: HIIT em casa 30min"],
+      "forca-3-academia":["Seg: Squat + Acessórios de pernas","Qua: Bench Press + Acessórios de peito","Sex: Deadlift + Acessórios de costas"],
+      "forca-4-academia":["Seg: Squat + Acessórios","Ter: Bench + Acessórios","Qui: Deadlift + Acessórios","Sex: Overhead Press + Braços"],
+      "forca-3-casa":["Seg: Agachamento búlgaro + Afundo com carga","Qua: Flexão com variações de pegada","Sex: Hip thrust + Remada elástico"],
+      "condicionamento-3-academia":["Seg: Treino metabólico + Corrida 20min","Qua: HIIT na esteira + Core","Sex: Circuito aeróbico + Mobilidade"],
+      "condicionamento-4-academia":["Seg: Corrida moderada 40min","Ter: HIIT + Força funcional","Qui: Corrida intervalada (tiro)","Sex: Circuito metabólico completo"],
+      "condicionamento-3-casa":["Seg: HIIT 35min (jumping jack, burpee, sprint)","Qua: Corrida ao ar livre 30min + Core","Sex: Circuito funcional + Corrida 20min"],
+      "condicionamento-3-misto":["Seg: Corrida ao ar livre 40min","Qua: HIIT em casa 30min","Sex: Treino metabólico (academia)"],
+      "condicionamento-4-misto":["Seg: Corrida ao ar livre 40min","Ter: HIIT em casa 30min","Qui: Treino metabólico (academia)","Sex: Corrida leve + Mobilidade"],
     };
-    const key=`${trForm.objetivo}-${trForm.dias}`;
-    setTrResult(planos[key]||planos[`${trForm.objetivo}-3`]||planos["hipertrofia-3"]);
+    const localKey = trForm.local==="misto"?"misto":trForm.local;
+    const key=`${trForm.objetivo}-${trForm.dias}-${localKey}`;
+    const fallback=`${trForm.objetivo}-3-${localKey==="academia"?"academia":"casa"}`;
+    setTrResult(planos[key]||planos[fallback]||planos["hipertrofia-3-academia"]);
   };
 
   // POSTURAL
@@ -900,18 +909,32 @@ function ToolsPage({ user }) {
             <>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 20px"}}>
                 <Select label="OBJETIVO" value={trForm.objetivo} onChange={e=>setTr("objetivo",e.target.value)}
-                  options={[{v:"hipertrofia",l:"Hipertrofia"},{v:"emagrecimento",l:"Emagrecimento"},{v:"forca",l:"Força"},{v:"condicionamento",l:"Condicionamento"}]}/>
+                  options={[{v:"hipertrofia",l:"Hipertrofia — Ganhar massa"},{v:"emagrecimento",l:"Emagrecimento — Perder gordura"},{v:"forca",l:"Força — Levantamentos"},{v:"condicionamento",l:"Condicionamento — Corrida + HIIT"}]}/>
                 <Select label="NÍVEL" value={trForm.nivel} onChange={e=>setTr("nivel",e.target.value)}
-                  options={[{v:"iniciante",l:"Iniciante"},{v:"intermediario",l:"Intermediário"},{v:"avancado",l:"Avançado"}]}/>
+                  options={[{v:"iniciante",l:"Iniciante — menos de 1 ano"},{v:"intermediario",l:"Intermediário — 1 a 3 anos"},{v:"avancado",l:"Avançado — mais de 3 anos"}]}/>
                 <Select label="DIAS POR SEMANA" value={trForm.dias} onChange={e=>setTr("dias",e.target.value)}
                   options={[{v:"3",l:"3 dias"},{v:"4",l:"4 dias"},{v:"5",l:"5 dias"}]}/>
                 <Select label="GÊNERO" value={trForm.genero} onChange={e=>setTr("genero",e.target.value)}
                   options={[{v:"m",l:"Masculino"},{v:"f",l:"Feminino"}]}/>
               </div>
+              <Select label="LOCAL DE TREINO" value={trForm.local} onChange={e=>setTr("local",e.target.value)}
+                options={[{v:"academia",l:"Academia — equipamentos completos"},{v:"casa",l:"Em casa — peso corporal / elástico"},{v:"misto",l:"Meio a meio — academia + casa / rua"}]}/>
               <Btn onClick={gerarTreino}>GERAR TREINO →</Btn>
               {trResult && (
                 <ResultBox>
-                  <div style={{fontFamily:F.m,fontSize:"10px",letterSpacing:"3px",color:G.gold,marginBottom:"16px"}}>SEU PLANO</div>
+                  {/* Metodologia badge */}
+                  <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"18px",
+                    background:"rgba(201,168,76,0.08)",border:`1px solid ${G.border}`,
+                    borderRadius:"8px",padding:"10px 14px"}}>
+                    <span style={{fontSize:"16px"}}>◆</span>
+                    <div>
+                      <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"2px",color:G.gold}}>METODOLOGIA DANIEL REZENDE</div>
+                      <div style={{fontFamily:F.s,fontSize:"12px",color:G.muted,marginTop:"2px"}}>
+                        Estrutura baseada nos princípios de periodização e progressão de carga aplicados pelo Daniel em suas consultorias.
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{fontFamily:F.m,fontSize:"10px",letterSpacing:"3px",color:G.gold,marginBottom:"14px"}}>SEU PLANO DE TREINO</div>
                   <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:"10px"}}>
                     {trResult.map((d,i)=>(
                       <div key={i} style={{background:G.bg3,borderRadius:"8px",padding:"12px",border:`1px solid ${G.faint}`}}>
@@ -920,6 +943,9 @@ function ToolsPage({ user }) {
                       </div>
                     ))}
                   </div>
+                  <p style={{fontFamily:F.s,fontSize:"12px",color:G.muted,marginTop:"16px",marginBottom:0,lineHeight:1.6,fontStyle:"italic"}}>
+                    * Este é um esboço do seu plano semanal. Os exercícios, séries, repetições e cargas completos estão na sua planilha adquirida.
+                  </p>
                 </ResultBox>
               )}
             </>
