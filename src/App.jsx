@@ -536,7 +536,7 @@ function Dashboard({ user, onLogout }) {
               </div>
 
               <p style={{fontFamily:F.s,fontSize:"14px",color:G.muted,lineHeight:1.85,maxWidth:"480px",margin:"0 0 24px"}}>
-                Bacharel em Educação Física pela UNIRIO e atleta de fisiculturismo, desenvolvi minha metodologia ao longo de mais de 8 anos competindo no Brasil e no exterior. Tudo que aprendi nos bastidores das competições — sobre treino, alimentação e mentalidade — transformei em programas práticos para pessoas reais alcançarem resultados reais. Já ajudei centenas de alunos em vários países. Agora é a sua vez.
+                Bacharel em Educação Física pela UERJ, pós graduado em Biomecanica e Cinesiologia e atleta de fisiculturismo, desenvolvi minha metodologia ao longo de mais de 8 anos competindo no Brasil e no exterior. Tudo que aprendi nos bastidores das competições — sobre treino, alimentação e mentalidade — transformei em programas práticos para pessoas reais alcançarem resultados reais. Já ajudei centenas de alunos em vários países. Agora é a sua vez.
               </p>
               <div style={{display:"flex",gap:"32px",flexWrap:"wrap"}}>
                 {[["IFBB","Campeão Nacional"],["NPC","Internacional"],["8+","Anos de Consultoria"],["500+","Alunos"]].map(([n,l])=>(
