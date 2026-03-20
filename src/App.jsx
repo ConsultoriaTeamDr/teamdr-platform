@@ -526,9 +526,17 @@ function Dashboard({ user, onLogout }) {
             <div style={{position:"relative"}}>
               <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"4px",color:G.gold,marginBottom:"12px"}}>SEU COACH</div>
               <h2 style={{margin:"0 0 4px",fontFamily:F.d,fontSize:"clamp(28px,4vw,42px)",fontWeight:"900",color:G.white,lineHeight:0.95,letterSpacing:"-1px"}}>Daniel</h2>
-              <h2 style={{margin:"0 0 16px",fontFamily:F.d,fontSize:"clamp(28px,4vw,42px)",fontWeight:"900",lineHeight:0.95,letterSpacing:"-1px",fontStyle:"italic",color:G.gold}}>Rezende.</h2>
-              <p style={{fontFamily:F.s,fontSize:"14px",color:G.muted,lineHeight:1.8,maxWidth:"480px",margin:"0 0 24px"}}>
-                Campeão IFBB e NPC em Men's Physique com mais de 8 anos de competição nacional e internacional. Formado em Educação Física, já transformou centenas de corpos com um método que une ciência, disciplina e individualização real.
+              <h2 style={{margin:"0 0 20px",fontFamily:F.d,fontSize:"clamp(28px,4vw,42px)",fontWeight:"900",lineHeight:0.95,letterSpacing:"-1px",fontStyle:"italic",color:G.gold}}>Rezende.</h2>
+
+              {/* Impact phrase */}
+              <div style={{borderLeft:`3px solid ${G.gold}`,paddingLeft:"16px",marginBottom:"20px"}}>
+                <p style={{fontFamily:F.d,fontSize:"17px",fontStyle:"italic",color:G.white,lineHeight:1.5,margin:0}}>
+                  "Não importa se você nunca pisou numa academia ou se já treina há anos. Meu trabalho é te levar ao próximo nível — seja lá qual for."
+                </p>
+              </div>
+
+              <p style={{fontFamily:F.s,fontSize:"14px",color:G.muted,lineHeight:1.85,maxWidth:"480px",margin:"0 0 24px"}}>
+                Bacharel em Educação Física pela UNIRIO e atleta de fisiculturismo, desenvolvi minha metodologia ao longo de mais de 8 anos competindo no Brasil e no exterior. Tudo que aprendi nos bastidores das competições — sobre treino, alimentação e mentalidade — transformei em programas práticos para pessoas reais alcançarem resultados reais. Já ajudei centenas de alunos em vários países. Agora é a sua vez.
               </p>
               <div style={{display:"flex",gap:"32px",flexWrap:"wrap"}}>
                 {[["IFBB","Campeão Nacional"],["NPC","Internacional"],["8+","Anos de Consultoria"],["500+","Alunos"]].map(([n,l])=>(
