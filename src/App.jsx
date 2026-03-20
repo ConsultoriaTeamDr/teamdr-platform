@@ -501,6 +501,48 @@ function Dashboard({ user, onLogout }) {
         )}
       </div>
 
+      {/* DANIEL SECTION */}
+      {!loading && (
+        <div style={{
+          margin:"40px clamp(16px,4vw,60px)",
+          borderRadius:"16px",
+          overflow:"hidden",
+          border:`1px solid ${G.border}`,
+          background:G.bg2,
+          display:"flex",
+          flexWrap:"wrap",
+          minHeight:"320px",
+        }}>
+          <div style={{flex:"0 0 280px",minHeight:"320px",position:"relative",overflow:"hidden"}}>
+            <img src="/daniel.jpg" alt="Daniel Rezende"
+              style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center top",display:"block"}}/>
+            <div style={{position:"absolute",inset:0,
+              background:"linear-gradient(to right,transparent 60%,rgba(15,15,15,0.9) 100%)"}}/>
+          </div>
+          <div style={{flex:1,minWidth:"280px",padding:"36px 40px",display:"flex",flexDirection:"column",justifyContent:"center",position:"relative"}}>
+            <div style={{position:"absolute",inset:0,
+              backgroundImage:`radial-gradient(ellipse at 80% 50%,rgba(201,168,76,0.06) 0%,transparent 70%)`,
+              pointerEvents:"none"}}/>
+            <div style={{position:"relative"}}>
+              <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"4px",color:G.gold,marginBottom:"12px"}}>SEU COACH</div>
+              <h2 style={{margin:"0 0 4px",fontFamily:F.d,fontSize:"clamp(28px,4vw,42px)",fontWeight:"900",color:G.white,lineHeight:0.95,letterSpacing:"-1px"}}>Daniel</h2>
+              <h2 style={{margin:"0 0 16px",fontFamily:F.d,fontSize:"clamp(28px,4vw,42px)",fontWeight:"900",lineHeight:0.95,letterSpacing:"-1px",fontStyle:"italic",color:G.gold}}>Rezende.</h2>
+              <p style={{fontFamily:F.s,fontSize:"14px",color:G.muted,lineHeight:1.8,maxWidth:"480px",margin:"0 0 24px"}}>
+                Campeão IFBB e NPC em Men's Physique com mais de 8 anos de competição nacional e internacional. Formado em Educação Física, já transformou centenas de corpos com um método que une ciência, disciplina e individualização real.
+              </p>
+              <div style={{display:"flex",gap:"32px",flexWrap:"wrap"}}>
+                {[["IFBB","Campeão Nacional"],["NPC","Internacional"],["8+","Anos de Consultoria"],["500+","Alunos"]].map(([n,l])=>(
+                  <div key={n}>
+                    <div style={{fontFamily:F.m,fontSize:"20px",fontWeight:"500",color:G.gold,letterSpacing:"-0.5px"}}>{n}</div>
+                    <div style={{fontFamily:F.s,fontSize:"11px",color:G.muted,marginTop:"2px"}}>{l}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* CONTENT */}
       <div style={{padding:"36px 0 60px"}}>
         {loading ? (
