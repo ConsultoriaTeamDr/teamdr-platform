@@ -398,6 +398,13 @@ function Dashboard({ user, onLogout }) {
   const [loading, setLoad]    = useState(true);
   const [viewer,  setViewer]  = useState(null);
   const [scrolled,setScrolled]= useState(false);
+  const [toolFilter, setToolFilter] = useState(null); // { cat, label }
+
+  const OBJ_TO_CAT = {
+    hipertrofia:"Hipertrofia", emagrecimento:"Emagrecimento",
+    forca:"Força", condicionamento:"Condicionamento",
+    qualidade:"Qualidade de Vida",
+  };
 
   useEffect(()=>{
     const h=()=>setScrolled(window.scrollY>40);
@@ -506,16 +513,31 @@ function Dashboard({ user, onLogout }) {
             Ferramentas criadas pelo Daniel para te ajudar a tomar decisões mais inteligentes sobre seu treino e alimentação. A calculadora de IMC é gratuita — as demais são adquiridas separadamente e ficam disponíveis aqui assim que você compra.
           </p>
         </div>
-        <ToolsPage user={user}/>
+        <ToolsPage user={user} onFilter={(obj)=>setToolFilter(obj ? {cat:OBJ_TO_CAT[obj], label:obj} : null)}/>
       </div>
 
       {/* MEUS PRODUTOS */}
       <div style={{borderTop:`1px solid ${G.faint}`,paddingTop:"40px",paddingBottom:"60px"}}>
         <div style={{padding:"0 clamp(16px,4vw,60px)",marginBottom:"28px"}}>
           <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"4px",color:G.gold,marginBottom:"8px"}}>MEUS PRODUTOS</div>
-          <h2 style={{margin:0,fontFamily:F.d,fontSize:"clamp(22px,3vw,32px)",fontWeight:"700",color:G.white,letterSpacing:"-0.5px"}}>
-            Seus programas ativos
-          </h2>
+          <div style={{display:"flex",alignItems:"center",gap:"16px",flexWrap:"wrap"}}>
+            <h2 style={{margin:0,fontFamily:F.d,fontSize:"clamp(22px,3vw,32px)",fontWeight:"700",color:G.white,letterSpacing:"-0.5px"}}>
+              {toolFilter ? `Programas de ${toolFilter.cat}` : "Seus programas ativos"}
+            </h2>
+            {toolFilter && (
+              <button onClick={()=>setToolFilter(null)} style={{
+                fontFamily:F.m,fontSize:"9px",letterSpacing:"1.5px",
+                background:"transparent",border:`1px solid ${G.faint}`,
+                borderRadius:"20px",padding:"5px 14px",
+                color:G.muted,cursor:"pointer",
+              }}>VER TODOS ×</button>
+            )}
+          </div>
+          {toolFilter && (
+            <p style={{margin:"8px 0 0",fontFamily:F.s,fontSize:"13px",color:G.muted}}>
+              Baseado na sua seleção nas ferramentas — mostrando programas de <strong style={{color:G.gold}}>{toolFilter.cat}</strong>.
+            </p>
+          )}
         </div>
         {loading ? (
           <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"200px",gap:"16px"}}>
@@ -536,10 +558,36 @@ function Dashboard({ user, onLogout }) {
             </div>
           </div>
         ) : (
-          CATS.map(cat=>{
-            const ps = myProds.filter(p=>p.cat===cat);
-            return ps.length ? <Row key={cat} label={cat} ps={ps} onOpen={setViewer}/> : null;
-          })
+          (() => {
+            const filtered = toolFilter
+              ? myProds.filter(p=>p.cat===toolFilter.cat)
+              : myProds;
+            if (filtered.length===0) return (
+              <div style={{padding:"0 clamp(16px,4vw,60px)"}}>
+                <div style={{background:`rgba(201,168,76,0.06)`,border:`1px solid ${G.border}`,
+                  borderRadius:"12px",padding:"28px",textAlign:"center"}}>
+                  <div style={{fontFamily:F.d,fontSize:"18px",color:G.white,marginBottom:"8px"}}>
+                    Você ainda não tem programas de {toolFilter.cat}
+                  </div>
+                  <p style={{fontFamily:F.s,fontSize:"14px",color:G.muted,margin:"0 0 20px",lineHeight:1.7}}>
+                    Que tal dar o próximo passo e adquirir um programa de {toolFilter.cat}?
+                  </p>
+                  <div style={{display:"inline-block",fontFamily:F.m,fontSize:"11px",letterSpacing:"2px",
+                    background:`linear-gradient(135deg,${G.gold},${G.goldDim})`,
+                    color:"#080808",padding:"13px 24px",borderRadius:"8px",cursor:"pointer"}}>
+                    VER PROGRAMAS DE {toolFilter.cat.toUpperCase()} →
+                  </div>
+                </div>
+              </div>
+            );
+            const cats = toolFilter
+              ? [toolFilter.cat]
+              : CATS;
+            return cats.map(cat=>{
+              const ps = filtered.filter(p=>p.cat===cat);
+              return ps.length ? <Row key={cat} label={cat} ps={ps} onOpen={setViewer}/> : null;
+            });
+          })()
         )}
       </div>
 
@@ -557,7 +605,7 @@ const TOOL_ACCESS = {
   ebook:    ["tool-ebook","mvip"],
 };
 
-function ToolsPage({ user }) {
+function ToolsPage({ user, onFilter }) {
   const buys = user?.buys || [];
   const hasAccess = (tool) => (TOOL_ACCESS[tool]||[]).some(id=>buys.includes(id));
 
@@ -625,17 +673,19 @@ function ToolsPage({ user }) {
 
           <div style={{display:"flex",alignItems:"center",gap:"20px",flexWrap:"wrap"}}>
             <div>
-              <div style={{fontFamily:F.m,fontSize:"10px",letterSpacing:"2px",color:G.muted,marginBottom:"2px"}}>INVESTIMENTO</div>
-              <div style={{fontFamily:F.m,fontSize:"32px",fontWeight:"500",color:G.gold,letterSpacing:"-1px",lineHeight:1}}>R$997</div>
+              <div style={{fontFamily:F.m,fontSize:"11px",letterSpacing:"2px",color:G.muted,marginBottom:"4px"}}>VAGAS LIMITADAS POR MÊS</div>
+              <div style={{fontFamily:F.s,fontSize:"13px",color:G.muted,maxWidth:"260px",lineHeight:1.6}}>
+                Daniel acompanha um número reduzido de alunos por vez para garantir atenção total a cada um.
+              </div>
             </div>
-            <button style={{
+            <button onClick={()=>window.open("https://wa.me/5521999999999?text=Olá Daniel! Quero saber mais sobre a Consultoria VIP 1:1","_blank")} style={{
               background:`linear-gradient(135deg,${G.gold},${G.goldDim})`,
               border:"none",borderRadius:"10px",
-              padding:"16px 32px",color:"#080808",
+              padding:"18px 36px",color:"#080808",
               fontFamily:F.m,fontSize:"12px",letterSpacing:"2px",fontWeight:"500",
               cursor:"pointer",
               boxShadow:`0 8px 30px rgba(201,168,76,0.35)`,
-            }}>QUERO A CONSULTORIA VIP →</button>
+            }}>AGENDAR MINHA CHAMADA →</button>
           </div>
         </div>
 
@@ -736,7 +786,10 @@ function ToolsPage({ user }) {
   // TREINO
   const [trForm,setTrForm]=useState({objetivo:"",nivel:"",dias:"",genero:"",local:""});
   const [trResult,setTrResult]=useState(null);
-  const setTr=(k,v)=>setTrForm(p=>({...p,[k]:v}));
+  const setTr=(k,v)=>{
+    setTrForm(p=>({...p,[k]:v}));
+    if(k==="objetivo") onFilter?.(v||null);
+  };
   const gerarTreino = () => {
     if(!trForm.objetivo||!trForm.dias||!trForm.local) return;
     const academia = trForm.local==="academia"||trForm.local==="misto";
