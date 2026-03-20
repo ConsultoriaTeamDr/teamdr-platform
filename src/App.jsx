@@ -273,26 +273,122 @@ export default function Funnel() {
       {/* NAV */}
       <nav style={{padding:"0 clamp(16px,4vw,60px)",height:"62px",display:"flex",
         alignItems:"center",justifyContent:"space-between",
-        borderBottom:`1px solid ${G.faint}`,background:G.bg}}>
+        position:"sticky",top:0,zIndex:100,
+        borderBottom:`1px solid ${G.faint}`,background:"rgba(8,8,8,0.95)",backdropFilter:"blur(12px)"}}>
         <div style={{display:"flex",alignItems:"center",gap:"6px"}}>
-          <div style={{fontFamily:F.m,fontSize:"8px",letterSpacing:"5px",color:G.gold}}>TEAM</div>
+          <div style={{fontFamily:F.m,fontSize:"8px",letterSpacing:"5px",color:G.gold,lineHeight:1.3}}>TEAM</div>
           <div style={{fontFamily:F.d,fontSize:"24px",fontWeight:"900",color:G.white,lineHeight:1,letterSpacing:"-1px"}}>DR</div>
         </div>
-        {cart.length>0 && (
-          <button onClick={()=>setStep(4)} style={{
-            background:"transparent",border:`1px solid ${G.border}`,borderRadius:"8px",
-            padding:"7px 16px",color:G.gold,fontFamily:F.m,fontSize:"10px",letterSpacing:"1.5px",cursor:"pointer",
-            display:"flex",alignItems:"center",gap:"8px",
-          }}>
-            ◆ CARRINHO
-            <span style={{background:G.gold,color:"#080808",borderRadius:"4px",padding:"2px 7px",fontSize:"10px"}}>
-              {cart.length}
-            </span>
-          </button>
-        )}
+        <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
+          {step>0 && (
+            <button onClick={()=>setStep(0)} style={{
+              background:"transparent",border:"none",
+              color:G.muted,fontFamily:F.m,fontSize:"10px",letterSpacing:"1.5px",cursor:"pointer",
+            }}>← INÍCIO</button>
+          )}
+          {cart.length>0 && (
+            <button onClick={()=>setStep(4)} style={{
+              background:"transparent",border:`1px solid ${G.border}`,borderRadius:"8px",
+              padding:"7px 16px",color:G.gold,fontFamily:F.m,fontSize:"10px",letterSpacing:"1.5px",cursor:"pointer",
+              display:"flex",alignItems:"center",gap:"8px",
+            }}>
+              ◆ CARRINHO
+              <span style={{background:G.gold,color:"#080808",borderRadius:"4px",padding:"2px 7px",fontSize:"10px"}}>
+                {cart.length}
+              </span>
+            </button>
+          )}
+        </div>
       </nav>
 
-      <div style={{maxWidth:"780px",margin:"0 auto",padding:"40px clamp(16px,4vw,40px) 100px"}}>
+      {/* ── HERO / BIO ──────────────────────────────────────────────────────── */}
+      {step===0 && (
+        <div style={{position:"relative",overflow:"hidden"}}>
+          {/* Background grid */}
+          <div style={{position:"absolute",inset:0,pointerEvents:"none",
+            backgroundImage:`linear-gradient(rgba(201,168,76,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.03) 1px,transparent 1px)`,
+            backgroundSize:"80px 80px"}}/>
+          {/* Gold glow */}
+          <div style={{position:"absolute",top:"-10%",right:"-5%",width:"600px",height:"600px",
+            background:`radial-gradient(ellipse,rgba(201,168,76,0.08) 0%,transparent 65%)`,pointerEvents:"none"}}/>
+
+          <div style={{display:"flex",flexWrap:"wrap",alignItems:"stretch",
+            minHeight:"520px",position:"relative"}}>
+
+            {/* Photo side */}
+            <div style={{flex:"0 0 clamp(280px,38vw,420px)",position:"relative",overflow:"hidden"}}>
+              <img src="/daniel.jpg" alt="Daniel Rezende"
+                style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center top",
+                  display:"block",minHeight:"520px"}}/>
+              <div style={{position:"absolute",inset:0,
+                background:"linear-gradient(to right,transparent 55%,rgba(8,8,8,0.98) 100%)"}}/>
+              <div style={{position:"absolute",inset:0,
+                background:"linear-gradient(to bottom,transparent 70%,rgba(8,8,8,0.6) 100%)"}}/>
+            </div>
+
+            {/* Text side */}
+            <div style={{flex:1,minWidth:"300px",padding:"48px clamp(24px,4vw,60px)",
+              display:"flex",flexDirection:"column",justifyContent:"center"}}>
+              <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"5px",color:G.gold,marginBottom:"14px"}}>
+                DANIEL REZENDE · TEAMDR
+              </div>
+              <h1 style={{margin:"0 0 6px",fontFamily:F.d,
+                fontSize:"clamp(36px,5vw,58px)",fontWeight:"900",
+                color:G.white,lineHeight:0.9,letterSpacing:"-2px"}}>
+                Transforme
+              </h1>
+              <h1 style={{margin:"0 0 20px",fontFamily:F.d,
+                fontSize:"clamp(36px,5vw,58px)",fontWeight:"900",
+                color:G.gold,lineHeight:0.9,letterSpacing:"-2px",fontStyle:"italic"}}>
+                seu corpo.
+              </h1>
+
+              {/* Quote */}
+              <div style={{borderLeft:`3px solid ${G.gold}`,paddingLeft:"16px",marginBottom:"20px"}}>
+                <p style={{fontFamily:F.d,fontSize:"16px",fontStyle:"italic",
+                  color:G.white,lineHeight:1.5,margin:0}}>
+                  "Não importa se você nunca pisou numa academia ou se já treina há anos. Meu trabalho é te levar ao próximo nível."
+                </p>
+              </div>
+
+              {/* Bio */}
+              <p style={{fontFamily:F.s,fontSize:"14px",color:G.muted,
+                lineHeight:1.85,margin:"0 0 24px",maxWidth:"460px"}}>
+                Bacharel em Educação Física pela UERJ, pós graduado em Biomecânica e Cinesiologia, com Diploma internacional na área de Fitness Trainer. Atleta de fisiculturismo com mais de 10 anos competindo no Brasil e no exterior. Já ajudei mais de 1000 alunos em vários países a alcançarem seus objetivos — seja emagrecer, ganhar massa, ganhar força ou simplesmente se sentir melhor.
+              </p>
+
+              {/* Stats */}
+              <div style={{display:"flex",gap:"28px",flexWrap:"wrap",marginBottom:"32px"}}>
+                {[["10+","anos competindo"],["1000+","alunos"],["NPC","campeão internacional"],["5+","anos de consultoria"]].map(([n,l])=>(
+                  <div key={n}>
+                    <div style={{fontFamily:F.m,fontSize:"20px",fontWeight:"500",color:G.gold,letterSpacing:"-0.5px"}}>{n}</div>
+                    <div style={{fontFamily:F.s,fontSize:"11px",color:G.muted,marginTop:"2px"}}>{l}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA */}
+              <div>
+                <button onClick={()=>{ window.scrollTo({top:document.getElementById("funil")?.offsetTop-80||0,behavior:"smooth"}); }}
+                  style={{
+                    background:`linear-gradient(135deg,${G.gold},${G.goldDim})`,
+                    border:"none",borderRadius:"10px",
+                    padding:"16px 32px",color:"#080808",
+                    fontFamily:F.m,fontSize:"12px",letterSpacing:"2.5px",fontWeight:"500",
+                    cursor:"pointer",
+                    boxShadow:`0 8px 30px rgba(201,168,76,0.3)`,
+                  }}>MONTAR MEU PROGRAMA →</button>
+              </div>
+            </div>
+          </div>
+
+          {/* Gold divider */}
+          <div style={{height:"2px",background:`linear-gradient(to right,transparent,${G.gold},transparent)`}}/>
+        </div>
+      )}
+
+      {/* ── FUNNEL ──────────────────────────────────────────────────────────── */}
+      <div id="funil" style={{maxWidth:"780px",margin:"0 auto",padding:"48px clamp(16px,4vw,40px) 100px"}}>
 
         <ProgressBar step={step} total={5} labels={STEPS}/>
 
@@ -556,7 +652,7 @@ export default function Funnel() {
                   </div>
                   <div style={{background:G.bg2,border:`1px solid ${G.border}`,
                     borderRadius:"12px",overflow:"hidden",position:"relative",minHeight:"200px"}}>
-                    <img src="/public/daniel-vip.jpg" alt="Daniel Rezende"
+                    <img src="/public/daniel-studio.jpg" alt="Daniel Rezende"
                       style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover",objectPosition:"center top"}}/>
                     <div style={{position:"absolute",inset:0,background:"linear-gradient(105deg,rgba(8,8,8,0.96) 0%,rgba(8,8,8,0.8) 60%,rgba(8,8,8,0.4) 100%)"}}/>
                     <div style={{position:"relative",padding:"28px 32px",display:"flex",
