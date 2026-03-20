@@ -597,13 +597,54 @@ function Dashboard({ user, onLogout }) {
 }
 
 // ── TOOLS PAGE (inline — sem import externo) ──────────────────────────────────
-// IDs de produtos que desbloqueiam cada ferramenta:
 const TOOL_ACCESS = {
   calorias: ["tool-cal","mvip"],
   treino:   ["hm1","hf1","fm1","cm2","qm1","qf1","hm4","em3","ef1","tool-treino","mvip"],
   postural: ["tool-post","mvip"],
   ebook:    ["tool-ebook","mvip"],
 };
+
+// ── Shared UI components — definidos FORA do ToolsPage pra evitar re-mount a cada keystroke
+const TBtn = ({ onClick, children, secondary }) => (
+  <button onClick={onClick} style={{
+    background: secondary?"transparent":`linear-gradient(135deg,${G.gold},${G.goldDim})`,
+    border: secondary?`1px solid ${G.border}`:"none",
+    borderRadius:"8px",padding:"13px 24px",
+    color: secondary?G.gold:"#080808",
+    fontFamily:F.m,fontSize:"11px",letterSpacing:"2px",cursor:"pointer",fontWeight:"500",
+  }}>{children}</button>
+);
+
+const TSelect = ({ label, options, ...props }) => (
+  <div style={{marginBottom:"14px"}}>
+    <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"2.5px",color:G.muted,marginBottom:"6px"}}>{label}</div>
+    <select {...props} style={{width:"100%",background:G.bg3,border:`1px solid rgba(201,168,76,0.15)`,borderRadius:"8px",
+      padding:"11px 14px",color:G.white,fontSize:"14px",fontFamily:F.s,outline:"none",cursor:"pointer"}}>
+      <option value="">Selecione...</option>
+      {options.map(o=><option key={o.v} value={o.v}>{o.l}</option>)}
+    </select>
+  </div>
+);
+
+const TInput = ({ label, ...props }) => (
+  <div style={{marginBottom:"14px"}}>
+    <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"2.5px",color:G.muted,marginBottom:"6px"}}>{label}</div>
+    <input {...props} style={{width:"100%",background:G.faint,border:`1px solid rgba(201,168,76,0.15)`,borderRadius:"8px",
+      padding:"11px 14px",color:G.white,fontSize:"14px",fontFamily:F.s,outline:"none",boxSizing:"border-box"}}/>
+  </div>
+);
+
+const TStatCard = ({ label, value, sub, color }) => (
+  <div style={{background:G.bg3,border:`1px solid ${G.faint}`,borderRadius:"10px",padding:"16px",textAlign:"center"}}>
+    <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"2px",color:G.muted,marginBottom:"6px"}}>{label}</div>
+    <div style={{fontFamily:F.m,fontSize:"24px",fontWeight:"500",color:color||G.gold,letterSpacing:"-0.5px"}}>{value}</div>
+    {sub && <div style={{fontFamily:F.s,fontSize:"11px",color:G.muted,marginTop:"4px"}}>{sub}</div>}
+  </div>
+);
+
+const TResultBox = ({ children }) => (
+  <div style={{background:`rgba(201,168,76,0.06)`,border:`1px solid ${G.border}`,borderRadius:"12px",padding:"24px",marginTop:"20px"}}>{children}</div>
+);
 
 function ToolsPage({ user, onFilter }) {
   const buys = user?.buys || [];
@@ -618,15 +659,11 @@ function ToolsPage({ user, onFilter }) {
   ];
   const [tab, setTab] = useState("imc");
 
-  const Btn = ({ onClick, children, secondary }) => (
-    <button onClick={onClick} style={{
-      background: secondary?"transparent":`linear-gradient(135deg,${G.gold},${G.goldDim})`,
-      border: secondary?`1px solid ${G.border}`:"none",
-      borderRadius:"8px",padding:"13px 24px",
-      color: secondary?G.gold:"#080808",
-      fontFamily:F.m,fontSize:"11px",letterSpacing:"2px",cursor:"pointer",fontWeight:"500",
-    }}>{children}</button>
-  );
+  const Btn = TBtn;
+  const Select = TSelect;
+  const Input = TInput;
+  const StatCard = TStatCard;
+  const ResultBox = TResultBox;
 
   const VipBanner = () => (
     <div style={{marginTop:"24px",borderRadius:"16px",overflow:"hidden",position:"relative",minHeight:"320px"}}>
@@ -717,37 +754,6 @@ function ToolsPage({ user, onFilter }) {
       </div>
       <VipBanner/>
     </div>
-  );
-
-  const Select = ({ label, options, ...props }) => (
-    <div style={{marginBottom:"14px"}}>
-      <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"2.5px",color:G.muted,marginBottom:"6px"}}>{label}</div>
-      <select {...props} style={{width:"100%",background:G.bg3,border:`1px solid rgba(201,168,76,0.15)`,borderRadius:"8px",
-        padding:"11px 14px",color:G.white,fontSize:"14px",fontFamily:F.s,outline:"none",cursor:"pointer"}}>
-        <option value="">Selecione...</option>
-        {options.map(o=><option key={o.v} value={o.v}>{o.l}</option>)}
-      </select>
-    </div>
-  );
-
-  const Input = ({ label, ...props }) => (
-    <div style={{marginBottom:"14px"}}>
-      <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"2.5px",color:G.muted,marginBottom:"6px"}}>{label}</div>
-      <input {...props} style={{width:"100%",background:G.faint,border:`1px solid rgba(201,168,76,0.15)`,borderRadius:"8px",
-        padding:"11px 14px",color:G.white,fontSize:"14px",fontFamily:F.s,outline:"none",boxSizing:"border-box"}}/>
-    </div>
-  );
-
-  const StatCard = ({ label, value, sub, color }) => (
-    <div style={{background:G.bg3,border:`1px solid ${G.faint}`,borderRadius:"10px",padding:"16px",textAlign:"center"}}>
-      <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"2px",color:G.muted,marginBottom:"6px"}}>{label}</div>
-      <div style={{fontFamily:F.m,fontSize:"24px",fontWeight:"500",color:color||G.gold,letterSpacing:"-0.5px"}}>{value}</div>
-      {sub && <div style={{fontFamily:F.s,fontSize:"11px",color:G.muted,marginTop:"4px"}}>{sub}</div>}
-    </div>
-  );
-
-  const ResultBox = ({ children }) => (
-    <div style={{background:`rgba(201,168,76,0.06)`,border:`1px solid ${G.border}`,borderRadius:"12px",padding:"24px",marginTop:"20px"}}>{children}</div>
   );
 
   // IMC
