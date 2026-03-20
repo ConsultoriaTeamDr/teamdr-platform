@@ -310,7 +310,7 @@ function Login({ onLogin }) {
           <div style={{fontFamily:F.m,fontSize:"10px",letterSpacing:"3px",color:G.muted}}>— DANIEL REZENDE</div>
         </div>
         <div style={{...fade(400),position:"relative",display:"flex",gap:"28px"}}>
-          {[["5+","anos"],["1000+","alunos"],["3×","campeão"]].map(([n,l])=>(
+          {[["1000+","alunos transformados"],["10+","anos de experiência"],["100%","online"]].map(([n,l])=>(
             <div key={n}>
               <div style={{fontFamily:F.m,fontSize:"22px",fontWeight:"500",color:G.gold,letterSpacing:"-1px"}}>{n}</div>
               <div style={{fontFamily:F.s,fontSize:"11px",color:G.muted}}>{l}</div>
