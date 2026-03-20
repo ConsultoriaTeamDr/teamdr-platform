@@ -310,7 +310,7 @@ function Login({ onLogin }) {
           <div style={{fontFamily:F.m,fontSize:"10px",letterSpacing:"3px",color:G.muted}}>— DANIEL REZENDE</div>
         </div>
         <div style={{...fade(400),position:"relative",display:"flex",gap:"28px"}}>
-          {[["1000+","alunos transformados"],["10+","anos de experiência"],["100%","online"]].map(([n,l])=>(
+          {[["1000+","alunos transformados"],["8+","anos de experiência"],["100%","online"]].map(([n,l])=>(
             <div key={n}>
               <div style={{fontFamily:F.m,fontSize:"22px",fontWeight:"500",color:G.gold,letterSpacing:"-1px"}}>{n}</div>
               <div style={{fontFamily:F.s,fontSize:"11px",color:G.muted}}>{l}</div>
@@ -400,6 +400,7 @@ function Dashboard({ user, onLogout }) {
   const [filter,  setFilter]  = useState("Todos");
   const [scrolled,setScrolled]= useState(false);
   const [welcome, setWelcome] = useState(true);
+  const [page,    setPage]    = useState("home"); // home | ferramentas
 
   useEffect(()=>{
     const h=()=>setScrolled(window.scrollY>40);
@@ -441,6 +442,14 @@ function Dashboard({ user, onLogout }) {
           <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"2px",color:G.muted}}>ÁREA DO CLIENTE</div>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
+          <button onClick={()=>setPage(page==="ferramentas"?"home":"ferramentas")} style={{
+            background: page==="ferramentas" ? `linear-gradient(135deg,${G.gold},${G.goldDim})` : "transparent",
+            border:`1px solid ${page==="ferramentas" ? "transparent" : G.border}`,
+            borderRadius:"6px",padding:"7px 16px",
+            color: page==="ferramentas" ? "#080808" : G.gold,
+            fontFamily:F.m,fontSize:"9px",letterSpacing:"1.5px",cursor:"pointer"}}>
+            ◈ FERRAMENTAS
+          </button>
           <div style={{display:"flex",alignItems:"center",gap:"8px",padding:"6px 12px",
             border:`1px solid ${G.faint}`,borderRadius:"24px",background:G.faint}}>
             <div style={{width:"26px",height:"26px",borderRadius:"50%",
@@ -455,7 +464,16 @@ function Dashboard({ user, onLogout }) {
         </div>
       </nav>
 
-      {/* WELCOME */}
+      {/* FERRAMENTAS PAGE */}
+      {page==="ferramentas" && (
+        <div style={{paddingTop:"62px"}}>
+          <ToolsPage user={user}/>
+        </div>
+      )}
+
+      {/* HOME PAGE */}
+      {page==="home" && <>
+
       {welcome && !loading && (
         <div style={{marginTop:"62px",background:"rgba(201,168,76,0.07)",
           borderLeft:`3px solid ${G.gold}`,
@@ -580,6 +598,419 @@ function Dashboard({ user, onLogout }) {
       </div>
 
       {viewer && <Viewer p={viewer} onClose={()=>setViewer(null)}/>}
+      </>}
+    </div>
+  );
+}
+
+// ── TOOLS PAGE (inline — sem import externo) ──────────────────────────────────
+// IDs de produtos que desbloqueiam cada ferramenta:
+const TOOL_ACCESS = {
+  calorias: ["tool-cal","mvip"],
+  treino:   ["hm1","hf1","fm1","cm2","qm1","qf1","hm4","em3","ef1","tool-treino","mvip"],
+  postural: ["tool-post","mvip"],
+  ebook:    ["tool-ebook","mvip"],
+};
+
+function ToolsPage({ user }) {
+  const buys = user?.buys || [];
+  const hasAccess = (tool) => (TOOL_ACCESS[tool]||[]).some(id=>buys.includes(id));
+
+  const TABS = [
+    { id:"imc",      icon:"◉", label:"IMC" },
+    { id:"calorias", icon:"◆", label:"Calorias" },
+    { id:"treino",   icon:"▦", label:"Treino" },
+    { id:"postural", icon:"◈", label:"Postural" },
+    { id:"ebook",    icon:"★", label:"Ebook" },
+  ];
+  const [tab, setTab] = useState("imc");
+
+  const Btn = ({ onClick, children, secondary }) => (
+    <button onClick={onClick} style={{
+      background: secondary?"transparent":`linear-gradient(135deg,${G.gold},${G.goldDim})`,
+      border: secondary?`1px solid ${G.border}`:"none",
+      borderRadius:"8px",padding:"13px 24px",
+      color: secondary?G.gold:"#080808",
+      fontFamily:F.m,fontSize:"11px",letterSpacing:"2px",cursor:"pointer",fontWeight:"500",
+    }}>{children}</button>
+  );
+
+  const VipBanner = () => (
+    <div style={{background:"rgba(201,168,76,0.05)",border:`1px solid ${G.border}`,
+      borderRadius:"12px",padding:"20px 24px",marginTop:"16px",
+      display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:"12px"}}>
+      <div>
+        <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"3px",color:G.gold,marginBottom:"6px"}}>CONSULTORIA VIP</div>
+        <div style={{fontFamily:F.d,fontSize:"17px",fontWeight:"700",color:G.white,marginBottom:"4px"}}>
+          Quer Daniel do seu lado, 1:1?
+        </div>
+        <div style={{fontFamily:F.s,fontSize:"13px",color:G.muted,maxWidth:"400px",lineHeight:1.6}}>
+          Pula todas as ferramentas e tem um programa 100% personalizado, vídeo chamadas semanais e suporte diário direto com Daniel.
+        </div>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:"8px",alignItems:"flex-end"}}>
+        <div style={{fontFamily:F.m,fontSize:"22px",color:G.gold,letterSpacing:"-0.5px"}}>R$997</div>
+        <Btn>QUERO A VIP →</Btn>
+      </div>
+    </div>
+  );
+
+  const LockBanner = ({ tool, nome, preco }) => (
+    <div style={{marginTop:"20px"}}>
+      <div style={{background:`rgba(201,168,76,0.08)`,border:`1px solid ${G.border}`,
+        borderLeft:`3px solid ${G.gold}`,borderRadius:"0 10px 10px 0",
+        padding:"16px 20px",marginBottom:"12px",
+        display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:"12px"}}>
+        <div>
+          <div style={{fontFamily:F.d,fontSize:"15px",fontWeight:"700",color:G.white,marginBottom:"3px"}}>
+            🔒 Desbloqueie {nome}
+          </div>
+          <div style={{fontFamily:F.s,fontSize:"13px",color:G.muted}}>
+            Acesso completo por apenas <strong style={{color:G.gold}}>{preco}</strong>
+          </div>
+        </div>
+        <Btn>COMPRAR →</Btn>
+      </div>
+      <VipBanner/>
+    </div>
+  );
+
+  const Select = ({ label, options, ...props }) => (
+    <div style={{marginBottom:"14px"}}>
+      <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"2.5px",color:G.muted,marginBottom:"6px"}}>{label}</div>
+      <select {...props} style={{width:"100%",background:G.bg3,border:`1px solid rgba(201,168,76,0.15)`,borderRadius:"8px",
+        padding:"11px 14px",color:G.white,fontSize:"14px",fontFamily:F.s,outline:"none",cursor:"pointer"}}>
+        <option value="">Selecione...</option>
+        {options.map(o=><option key={o.v} value={o.v}>{o.l}</option>)}
+      </select>
+    </div>
+  );
+
+  const Input = ({ label, ...props }) => (
+    <div style={{marginBottom:"14px"}}>
+      <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"2.5px",color:G.muted,marginBottom:"6px"}}>{label}</div>
+      <input {...props} style={{width:"100%",background:G.faint,border:`1px solid rgba(201,168,76,0.15)`,borderRadius:"8px",
+        padding:"11px 14px",color:G.white,fontSize:"14px",fontFamily:F.s,outline:"none",boxSizing:"border-box"}}/>
+    </div>
+  );
+
+  const StatCard = ({ label, value, sub, color }) => (
+    <div style={{background:G.bg3,border:`1px solid ${G.faint}`,borderRadius:"10px",padding:"16px",textAlign:"center"}}>
+      <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"2px",color:G.muted,marginBottom:"6px"}}>{label}</div>
+      <div style={{fontFamily:F.m,fontSize:"24px",fontWeight:"500",color:color||G.gold,letterSpacing:"-0.5px"}}>{value}</div>
+      {sub && <div style={{fontFamily:F.s,fontSize:"11px",color:G.muted,marginTop:"4px"}}>{sub}</div>}
+    </div>
+  );
+
+  const ResultBox = ({ children }) => (
+    <div style={{background:`rgba(201,168,76,0.06)`,border:`1px solid ${G.border}`,borderRadius:"12px",padding:"24px",marginTop:"20px"}}>{children}</div>
+  );
+
+  // IMC
+  const [imcPeso,setImcPeso]=useState(""); const [imcAltura,setImcAltura]=useState(""); const [imcResult,setImcResult]=useState(null);
+  const calcIMC = () => {
+    const p=parseFloat(imcPeso),h=parseFloat(imcAltura)/100; if(!p||!h) return;
+    const imc=parseFloat((p/(h*h)).toFixed(1));
+    let cat,cor,desc;
+    if(imc<18.5){cat="Abaixo do peso";cor=G.blue;desc="Considere aumentar a ingestão calórica com qualidade nutricional."}
+    else if(imc<25){cat="Peso normal";cor="#4CAF7D";desc="Parabéns! Mantenha os bons hábitos de treino e alimentação."}
+    else if(imc<30){cat="Sobrepeso";cor=G.gold;desc="Um déficit calórico moderado com treino pode ajudar."}
+    else{cat="Obesidade";cor="#E05555";desc="Recomenda-se acompanhamento profissional."}
+    const min=Math.round(18.5*h*h),max=Math.round(24.9*h*h);
+    setImcResult({imc,cat,cor,desc,min,max,pct:Math.min(100,Math.max(0,((imc-15)/(40-15))*100))});
+  };
+
+  // CALORIAS
+  const [calForm,setCalForm]=useState({peso:"",altura:"",idade:"",sexo:"",atividade:"",objetivo:""});
+  const [calResult,setCalResult]=useState(null);
+  const setCal=(k,v)=>setCalForm(p=>({...p,[k]:v}));
+  const calcCal = () => {
+    const {peso,altura,idade,sexo,atividade,objetivo}=calForm;
+    if(!peso||!altura||!idade||!sexo||!atividade||!objetivo) return;
+    const p=parseFloat(peso),h=parseFloat(altura),i=parseFloat(idade);
+    const tmb=sexo==="m"?88.36+(13.4*p)+(4.8*h)-(5.7*i):447.6+(9.2*p)+(3.1*h)-(4.3*i);
+    const fat={sedentario:1.2,leve:1.375,moderado:1.55,intenso:1.725};
+    const tdee=Math.round(tmb*(fat[atividade]||1.55));
+    const aj=objetivo==="ganho"?300:objetivo==="perda"?-400:0;
+    const meta=tdee+aj;
+    const prot=Math.round(p*(objetivo==="ganho"?2.2:2.0));
+    const gord=Math.round((meta*0.25)/9);
+    const carb=Math.round((meta-(prot*4)-(gord*9))/4);
+    setCalResult({tmb:Math.round(tmb),tdee,meta,prot,gord,carb});
+  };
+
+  // TREINO
+  const [trForm,setTrForm]=useState({objetivo:"",nivel:"",dias:"",genero:""});
+  const [trResult,setTrResult]=useState(null);
+  const setTr=(k,v)=>setTrForm(p=>({...p,[k]:v}));
+  const gerarTreino = () => {
+    if(!trForm.objetivo||!trForm.dias) return;
+    const planos={
+      "hipertrofia-3":["Seg: Peito + Tríceps","Qua: Costas + Bíceps","Sex: Pernas + Ombros"],
+      "hipertrofia-4":["Seg: Peito","Ter: Costas","Qui: Pernas","Sex: Ombros + Braços"],
+      "emagrecimento-3":["Seg: Circuito Full Body","Qua: HIIT + Core","Sex: Circuito Full Body"],
+      "emagrecimento-4":["Seg: Superior + HIIT","Ter: Inferior","Qui: Superior + HIIT","Sex: Inferior + Cardio"],
+      "forca-3":["Seg: Squat","Qua: Bench Press","Sex: Deadlift"],
+      "forca-4":["Seg: Squat + Acessórios","Ter: Bench + Acessórios","Qui: Deadlift + Acessórios","Sex: Ombros + Braços"],
+    };
+    const key=`${trForm.objetivo}-${trForm.dias}`;
+    setTrResult(planos[key]||planos[`${trForm.objetivo}-3`]||planos["hipertrofia-3"]);
+  };
+
+  // POSTURAL
+  const PERGS=[
+    {id:"costas",txt:"Sente dor nas costas com frequência?",opts:["Nunca","Às vezes","Frequentemente","Sempre"]},
+    {id:"trabalho",txt:"Sua postura predominante no trabalho?",opts:["Sentado por horas","Em pé por horas","Alternado","Ativo/em movimento"]},
+    {id:"pescoco",txt:"Sente tensão no pescoço ou ombros?",opts:["Nunca","Às vezes","Frequentemente","Sempre"]},
+    {id:"joelhos",txt:"Desconforto nos joelhos?",opts:["Não","Leve","Moderado","Intenso"]},
+    {id:"mobilidade",txt:"Como avalia sua mobilidade?",opts:["Muito boa","Boa","Regular","Ruim"]},
+  ];
+  const [pStep,setPStep]=useState(0); const [pResp,setPResp]=useState({}); const [pResult,setPResult]=useState(null);
+  const responder=(id,val)=>{
+    const novo={...pResp,[id]:val};
+    setPResp(novo);
+    if(pStep<PERGS.length-1){setPStep(pStep+1);}
+    else{
+      const probs=[];
+      if(novo.costas==="Frequentemente"||novo.costas==="Sempre") probs.push("Lordose lombar acentuada");
+      if(novo.trabalho==="Sentado por horas") probs.push("Encurtamento de flexores do quadril");
+      if(novo.pescoco==="Frequentemente"||novo.pescoco==="Sempre") probs.push("Protrusão cervical");
+      if(novo.joelhos==="Moderado"||novo.joelhos==="Intenso") probs.push("Desequilíbrio nos membros inferiores");
+      if(novo.mobilidade==="Ruim"||novo.mobilidade==="Regular") probs.push("Mobilidade reduzida");
+      setPResult({probs,score:5-probs.length});
+    }
+  };
+
+  return (
+    <div style={{padding:"32px clamp(16px,4vw,60px)"}}>
+      <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"4px",color:G.gold,marginBottom:"6px"}}>FERRAMENTAS TEAMDR</div>
+      <h2 style={{margin:"0 0 24px",fontFamily:F.d,fontSize:"clamp(22px,3vw,32px)",fontWeight:"700",color:G.white,letterSpacing:"-0.5px"}}>
+        Suas ferramentas
+      </h2>
+
+      {/* Tabs */}
+      <div style={{display:"flex",gap:"8px",flexWrap:"wrap",marginBottom:"32px",borderBottom:`1px solid ${G.faint}`}}>
+        {TABS.map(t=>(
+          <button key={t.id} onClick={()=>setTab(t.id)} style={{
+            fontFamily:F.m,fontSize:"10px",letterSpacing:"1px",
+            background:tab===t.id?`linear-gradient(135deg,${G.gold},${G.goldDim})`:"transparent",
+            border:tab===t.id?"none":`1px solid ${G.faint}`,
+            borderRadius:"8px 8px 0 0",padding:"10px 18px",
+            color:tab===t.id?"#080808":G.muted,cursor:"pointer",transition:"all 0.2s",
+            position:"relative",
+          }}>
+            {t.icon} {t.label}
+            {t.id!=="imc" && !hasAccess(t.id) && (
+              <span style={{position:"absolute",top:"4px",right:"4px",width:"7px",height:"7px",
+                borderRadius:"50%",background:"#E05555"}}/>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* IMC — sempre gratuito */}
+      {tab==="imc" && (
+        <div>
+          <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"2px",color:"#4CAF7D",marginBottom:"20px"}}>
+            ✓ GRATUITO PARA TODOS
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 20px"}}>
+            <Input label="PESO (kg)" type="number" placeholder="Ex: 75" value={imcPeso} onChange={e=>setImcPeso(e.target.value)}/>
+            <Input label="ALTURA (cm)" type="number" placeholder="Ex: 175" value={imcAltura} onChange={e=>setImcAltura(e.target.value)}/>
+          </div>
+          <Btn onClick={calcIMC}>CALCULAR IMC →</Btn>
+          {imcResult && (
+            <ResultBox>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px",marginBottom:"20px"}}>
+                <StatCard label="SEU IMC" value={imcResult.imc} color={imcResult.cor} sub={imcResult.cat}/>
+                <StatCard label="PESO IDEAL" value={`${imcResult.min}–${imcResult.max}kg`} sub="faixa saudável" color="#4CAF7D"/>
+              </div>
+              <div style={{height:"8px",borderRadius:"4px",background:G.faint,position:"relative",marginBottom:"16px"}}>
+                <div style={{position:"absolute",left:0,top:0,bottom:0,width:"20%",background:G.blue,opacity:0.4,borderRadius:"4px 0 0 4px"}}/>
+                <div style={{position:"absolute",left:"20%",top:0,bottom:0,width:"26%",background:"#4CAF7D",opacity:0.4}}/>
+                <div style={{position:"absolute",left:"46%",top:0,bottom:0,width:"22%",background:G.gold,opacity:0.4}}/>
+                <div style={{position:"absolute",left:"68%",top:0,bottom:0,width:"32%",background:"#E05555",opacity:0.4,borderRadius:"0 4px 4px 0"}}/>
+                <div style={{position:"absolute",top:"-2px",width:"12px",height:"12px",borderRadius:"50%",
+                  background:imcResult.cor,border:"2px solid #080808",left:`calc(${imcResult.pct}% - 6px)`}}/>
+              </div>
+              <p style={{fontFamily:F.s,fontSize:"14px",color:G.muted,lineHeight:1.7,margin:0}}>{imcResult.desc}</p>
+              <VipBanner/>
+            </ResultBox>
+          )}
+        </div>
+      )}
+
+      {/* CALORIAS */}
+      {tab==="calorias" && (
+        <div>
+          {!hasAccess("calorias") ? (
+            <div>
+              <div style={{fontFamily:F.d,fontSize:"20px",fontWeight:"700",color:G.white,marginBottom:"8px"}}>Calculadora de Calorias & Macros</div>
+              <p style={{fontFamily:F.s,fontSize:"14px",color:G.muted,lineHeight:1.7,marginBottom:"20px"}}>
+                Descubra exatamente quantas calorias você precisa e como distribuir seus macros para atingir seu objetivo — seja ganhar massa, emagrecer ou manter o peso.
+              </p>
+              <LockBanner tool="calorias" nome="Calculadora de Calorias" preco="R$47"/>
+            </div>
+          ) : (
+            <>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 20px"}}>
+                <Input label="PESO (kg)" type="number" placeholder="Ex: 75" value={calForm.peso} onChange={e=>setCal("peso",e.target.value)}/>
+                <Input label="ALTURA (cm)" type="number" placeholder="Ex: 175" value={calForm.altura} onChange={e=>setCal("altura",e.target.value)}/>
+                <Input label="IDADE" type="number" placeholder="Ex: 28" value={calForm.idade} onChange={e=>setCal("idade",e.target.value)}/>
+                <Select label="SEXO" value={calForm.sexo} onChange={e=>setCal("sexo",e.target.value)}
+                  options={[{v:"m",l:"Masculino"},{v:"f",l:"Feminino"}]}/>
+              </div>
+              <Select label="NÍVEL DE ATIVIDADE" value={calForm.atividade} onChange={e=>setCal("atividade",e.target.value)}
+                options={[{v:"sedentario",l:"Sedentário"},{v:"leve",l:"Leve — 1-3x/sem"},{v:"moderado",l:"Moderado — 3-5x/sem"},{v:"intenso",l:"Intenso — 6-7x/sem"}]}/>
+              <Select label="OBJETIVO" value={calForm.objetivo} onChange={e=>setCal("objetivo",e.target.value)}
+                options={[{v:"ganho",l:"Ganhar massa"},{v:"manutencao",l:"Manter peso"},{v:"perda",l:"Emagrecer"}]}/>
+              <Btn onClick={calcCal}>CALCULAR →</Btn>
+              {calResult && (
+                <ResultBox>
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"10px",marginBottom:"16px"}}>
+                    <StatCard label="METABOLISMO BASAL" value={calResult.tmb} sub="kcal/dia"/>
+                    <StatCard label="GASTO TOTAL" value={calResult.tdee} sub="kcal/dia" color={G.white}/>
+                    <StatCard label="META" value={calResult.meta} sub="kcal/dia" color="#4CAF7D"/>
+                  </div>
+                  <div style={{fontFamily:F.m,fontSize:"10px",letterSpacing:"3px",color:G.gold,marginBottom:"12px"}}>MACROS DIÁRIOS</div>
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"10px"}}>
+                    <StatCard label="PROTEÍNA" value={`${calResult.prot}g`} sub={`${calResult.prot*4}kcal`} color={G.blue}/>
+                    <StatCard label="CARBOIDRATO" value={`${calResult.carb}g`} sub={`${calResult.carb*4}kcal`} color={G.gold}/>
+                    <StatCard label="GORDURA" value={`${calResult.gord}g`} sub={`${calResult.gord*9}kcal`} color={G.pink}/>
+                  </div>
+                </ResultBox>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
+      {/* TREINO */}
+      {tab==="treino" && (
+        <div>
+          {!hasAccess("treino") ? (
+            <div>
+              <div style={{fontFamily:F.d,fontSize:"20px",fontWeight:"700",color:G.white,marginBottom:"8px"}}>Treino Personalizado</div>
+              <p style={{fontFamily:F.s,fontSize:"14px",color:G.muted,lineHeight:1.7,marginBottom:"20px"}}>
+                Monte seu treino ideal com base no seu objetivo, nível e dias disponíveis. Plano completo gerado na hora.
+              </p>
+              <LockBanner tool="treino" nome="Treino Personalizado" preco="R$97"/>
+            </div>
+          ) : (
+            <>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 20px"}}>
+                <Select label="OBJETIVO" value={trForm.objetivo} onChange={e=>setTr("objetivo",e.target.value)}
+                  options={[{v:"hipertrofia",l:"Hipertrofia"},{v:"emagrecimento",l:"Emagrecimento"},{v:"forca",l:"Força"},{v:"condicionamento",l:"Condicionamento"}]}/>
+                <Select label="NÍVEL" value={trForm.nivel} onChange={e=>setTr("nivel",e.target.value)}
+                  options={[{v:"iniciante",l:"Iniciante"},{v:"intermediario",l:"Intermediário"},{v:"avancado",l:"Avançado"}]}/>
+                <Select label="DIAS POR SEMANA" value={trForm.dias} onChange={e=>setTr("dias",e.target.value)}
+                  options={[{v:"3",l:"3 dias"},{v:"4",l:"4 dias"},{v:"5",l:"5 dias"}]}/>
+                <Select label="GÊNERO" value={trForm.genero} onChange={e=>setTr("genero",e.target.value)}
+                  options={[{v:"m",l:"Masculino"},{v:"f",l:"Feminino"}]}/>
+              </div>
+              <Btn onClick={gerarTreino}>GERAR TREINO →</Btn>
+              {trResult && (
+                <ResultBox>
+                  <div style={{fontFamily:F.m,fontSize:"10px",letterSpacing:"3px",color:G.gold,marginBottom:"16px"}}>SEU PLANO</div>
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:"10px"}}>
+                    {trResult.map((d,i)=>(
+                      <div key={i} style={{background:G.bg3,borderRadius:"8px",padding:"12px",border:`1px solid ${G.faint}`}}>
+                        <div style={{fontFamily:F.m,fontSize:"9px",color:G.gold,marginBottom:"4px"}}>DIA {i+1}</div>
+                        <div style={{fontFamily:F.s,fontSize:"13px",color:G.white,lineHeight:1.4}}>{d}</div>
+                      </div>
+                    ))}
+                  </div>
+                </ResultBox>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
+      {/* POSTURAL */}
+      {tab==="postural" && (
+        <div>
+          {!hasAccess("postural") ? (
+            <div>
+              <div style={{fontFamily:F.d,fontSize:"20px",fontWeight:"700",color:G.white,marginBottom:"8px"}}>Avaliação Postural</div>
+              <p style={{fontFamily:F.s,fontSize:"14px",color:G.muted,lineHeight:1.7,marginBottom:"20px"}}>
+                Identifique desequilíbrios posturais, pontos de tensão e receba recomendações personalizadas para corrigir sua postura.
+              </p>
+              <LockBanner tool="postural" nome="Avaliação Postural" preco="R$47"/>
+            </div>
+          ) : !pResult ? (
+            <>
+              <div style={{display:"flex",gap:"6px",marginBottom:"24px"}}>
+                {PERGS.map((_,i)=>(
+                  <div key={i} style={{flex:1,height:"3px",borderRadius:"2px",
+                    background:i<pStep?G.gold:i===pStep?G.gold:G.faint,opacity:i===pStep?1:i<pStep?0.7:0.3}}/>
+                ))}
+              </div>
+              <div style={{fontFamily:F.m,fontSize:"9px",letterSpacing:"3px",color:G.muted,marginBottom:"8px"}}>
+                PERGUNTA {pStep+1} DE {PERGS.length}
+              </div>
+              <div style={{fontFamily:F.d,fontSize:"20px",fontWeight:"700",color:G.white,marginBottom:"20px",lineHeight:1.3}}>
+                {PERGS[pStep].txt}
+              </div>
+              <div style={{display:"flex",flexDirection:"column",gap:"10px"}}>
+                {PERGS[pStep].opts.map(o=>(
+                  <button key={o} onClick={()=>responder(PERGS[pStep].id,o)}
+                    style={{background:G.faint,border:`1px solid rgba(201,168,76,0.15)`,borderRadius:"8px",
+                      padding:"13px 18px",color:G.white,fontFamily:F.s,fontSize:"14px",cursor:"pointer",textAlign:"left"}}>
+                    {o}
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : (
+            <ResultBox>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px",marginBottom:"20px"}}>
+                <StatCard label="SCORE POSTURAL" value={`${pResult.score}/5`}
+                  color={pResult.score>=4?"#4CAF7D":pResult.score>=2?G.gold:"#E05555"}
+                  sub={pResult.score>=4?"Boa postura":pResult.score>=2?"Atenção":"Correção urgente"}/>
+                <StatCard label="PONTOS DE ATENÇÃO" value={pResult.probs.length} color={pResult.probs.length===0?"#4CAF7D":"#E05555"} sub="identificados"/>
+              </div>
+              {pResult.probs.map((p,i)=>(
+                <div key={i} style={{display:"flex",gap:"10px",marginBottom:"8px"}}>
+                  <span style={{color:"#E05555",flexShrink:0}}>!</span>
+                  <span style={{fontFamily:F.s,fontSize:"13px",color:G.muted}}>{p}</span>
+                </div>
+              ))}
+              {["10 min de mobilidade matinal diariamente","Fortaleça o core regularmente","Alongamento de psoas 3x por semana","A cada 1h sentado, levante e caminhe 5 min"].map((r,i)=>(
+                <div key={i} style={{display:"flex",gap:"10px",marginBottom:"8px"}}>
+                  <span style={{color:"#4CAF7D",flexShrink:0}}>✓</span>
+                  <span style={{fontFamily:F.s,fontSize:"13px",color:G.muted}}>{r}</span>
+                </div>
+              ))}
+              <div style={{marginTop:"16px"}}>
+                <Btn secondary onClick={()=>{setPStep(0);setPResp({});setPResult(null);}}>REFAZER</Btn>
+              </div>
+            </ResultBox>
+          )}
+        </div>
+      )}
+
+      {/* EBOOK */}
+      {tab==="ebook" && (
+        <div>
+          {!hasAccess("ebook") ? (
+            <div>
+              <div style={{fontFamily:F.d,fontSize:"20px",fontWeight:"700",color:G.white,marginBottom:"8px"}}>Ebook Nutricional Personalizado</div>
+              <p style={{fontFamily:F.s,fontSize:"14px",color:G.muted,lineHeight:1.7,marginBottom:"20px"}}>
+                Receba um plano alimentar completo gerado para o seu objetivo, com lista de refeições, substituições e dicas práticas do Daniel.
+              </p>
+              <LockBanner tool="ebook" nome="Ebook Nutricional" preco="R$67"/>
+            </div>
+          ) : (
+            <>
+              <Select label="OBJETIVO NUTRICIONAL" options={[{v:"hipertrofia",l:"Ganhar massa"},{v:"emagrecimento",l:"Emagrecer"},{v:"manutencao",l:"Manter peso"}]}/>
+              <Select label="RESTRIÇÕES" options={[{v:"nenhuma",l:"Nenhuma"},{v:"lactose",l:"Sem lactose"},{v:"vegetariano",l:"Vegetariano"},{v:"vegano",l:"Vegano"}]}/>
+              <Select label="REFEIÇÕES POR DIA" options={[{v:"3",l:"3 refeições"},{v:"4",l:"4 refeições"},{v:"5",l:"5 refeições"}]}/>
+              <Btn>GERAR EBOOK →</Btn>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
