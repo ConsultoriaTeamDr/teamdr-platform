@@ -310,7 +310,7 @@ function Login({ onLogin }) {
           <div style={{fontFamily:F.m,fontSize:"10px",letterSpacing:"3px",color:G.muted}}>— DANIEL REZENDE</div>
         </div>
         <div style={{...fade(400),position:"relative",display:"flex",gap:"28px"}}>
-          {[["8+","anos"],["500+","alunos"],["3×","campeão"]].map(([n,l])=>(
+          {[["5+","anos"],["1000+","alunos"],["3×","campeão"]].map(([n,l])=>(
             <div key={n}>
               <div style={{fontFamily:F.m,fontSize:"22px",fontWeight:"500",color:G.gold,letterSpacing:"-1px"}}>{n}</div>
               <div style={{fontFamily:F.s,fontSize:"11px",color:G.muted}}>{l}</div>
@@ -536,10 +536,10 @@ function Dashboard({ user, onLogout }) {
               </div>
 
               <p style={{fontFamily:F.s,fontSize:"14px",color:G.muted,lineHeight:1.85,maxWidth:"480px",margin:"0 0 24px"}}>
-                Bacharel em Educação Física pela UERJ, pós graduado em Biomecânica e Cinesiologia, com Diploma internacional na área de Fitness Trainer e atleta de fisiculturismo, desenvolvi minha metodologia ao longo de mais de 8 anos competindo no Brasil e no exterior. Tudo que aprendi nos bastidores das competições — sobre treino, alimentação e mentalidade — transformei em programas práticos para pessoas reais alcançarem resultados reais. Já ajudei centenas de alunos em vários países. Agora é a sua vez.
+                Bacharel em Educação Física pela UERJ e atleta de fisiculturismo, desenvolvi minha metodologia ao longo de mais de 8 anos competindo no Brasil e no exterior. Tudo que aprendi nos bastidores das competições — sobre treino, alimentação e mentalidade — transformei em programas práticos para pessoas reais alcançarem resultados reais. Já ajudei centenas de alunos em vários países. Agora é a sua vez.
               </p>
               <div style={{display:"flex",gap:"32px",flexWrap:"wrap"}}>
-                {["10+","Anos competindo"],["NPC","Campeão Internacional"],["5+","Anos de Consultoria"],["1000+","Alunos"]].map(([n,l])=>(
+                {[["10+","Anos competindo"],["NPC","Campeão Internacional"],["5+","Anos de Consultoria"],["1000+","Alunos"]].map(([n,l])=>(
                   <div key={n}>
                     <div style={{fontFamily:F.m,fontSize:"20px",fontWeight:"500",color:G.gold,letterSpacing:"-0.5px"}}>{n}</div>
                     <div style={{fontFamily:F.s,fontSize:"11px",color:G.muted,marginTop:"2px"}}>{l}</div>
